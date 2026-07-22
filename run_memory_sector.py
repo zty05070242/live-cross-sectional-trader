@@ -101,15 +101,17 @@ def run_once_for_target(symbol_y: str, equity: float, risk_pct: float) -> None:
     has_short = current_qty < 0
     new_signal = sig["signal"]   # +1, -1, or 0
 
-    # Exit logic
+    # Exit logic — close only. Re-entry (including reversal to the opposite
+    # side) is deferred to a later cycle, once the close has actually filled
+    # and the shares are no longer held against the pending close order.
     if has_long and new_signal <= 0:
         log.info("Closing LONG %s (signal changed to %+d)", symbol_y, new_signal)
         close_position(symbol_y)
-        has_long = False
-    elif has_short and new_signal >= 0:
+        return
+    if has_short and new_signal >= 0:
         log.info("Closing SHORT %s (signal changed to %+d)", symbol_y, new_signal)
         close_position(symbol_y)
-        has_short = False
+        return
 
     # Entry logic
     if new_signal == 0 or (new_signal == 1 and has_long) or (new_signal == -1 and has_short):
