@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# AI agent skill installs (local tooling, not project source)
+.agents/
+.claude/
+agent/
+skills-lock.json
